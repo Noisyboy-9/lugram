@@ -11,6 +11,7 @@ then we have to copy our define our environment variables
 cp .env.example .env
 ``` 
 then we have to generate a random application key and then defining our database credentials 
+
 ## license 
 this project is licensed under MIT license system.
   

@@ -6,6 +6,8 @@ use Laravel\Lumen\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    use InteractsWithExceptionHandling;
+
     /**
      * Creates the application.
      *

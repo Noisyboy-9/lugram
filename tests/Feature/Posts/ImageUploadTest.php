@@ -14,6 +14,7 @@ class ImageUploadTest extends TestCase
     /** @test * */
     public function an_image_can_be_uploaded()
     {
+        $this->withoutExceptionHandling();
 
 //        given we have a storage and an image
         Storage::fake('public');

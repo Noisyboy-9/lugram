@@ -19,11 +19,10 @@ class ImageUploadTest extends TestCase
 //        given we have a storage and an image
         Storage::fake('public');
         $image = UploadedFile::fake()->image('test.jpg');
-//        when we request the /posts point the image will be saved
-        $this->post('/posts', [
-            'image' => $image,
-        ]);
 
+
+//        when we request the /posts point the image will be saved
+        $this->call('POST', '/posts', [], [], ['image' => $image]);
 //        then an image is in the storage
         $this->assertFileExists('test.jpg');
     }

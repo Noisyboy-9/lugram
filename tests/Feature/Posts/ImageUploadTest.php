@@ -5,22 +5,55 @@ namespace AppTests\Feature\Posts;
 use AppTests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class ImageUploadTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseMigrations;
+
+    /**
+     * hit image upload end point with the provided image
+     *
+     * @param \Illuminate\Http\Testing\File $image
+     */
+    private function uploadImage($image)
+    {
+        return $this->call('POST', '/posts', [], [], ['image' => $image]);
+    }
 
     /** @test * */
-    public function an_image_can_be_uploaded_and_it_will_be_saved_to_public_disk_inside_images_folder()
+    public function a_image_can_be_uploaded_and_it_will_be_saved_to_public_disk_inside_images_folder_and_path_will_be_saved()
     {
         Storage::fake('public');
         $image = UploadedFile::fake()->image('test.jpg');
-
-
-        $this->call('POST', '/posts', [], [], ['image' => $image]);
+        $reponse = $this->uploadImage($image);
 
         $this->assertCount(1, Storage::disk('public')->allDirectories());
         $this->assertCount(1, Storage::disk('public')->allFiles('images'));
+
+        $imageSavePath = Storage::disk('public')->getAdapter()->getPathPrefix() . "images" . "\\" . $image->hashName();
+        $imageRealSavePath = realpath($imageSavePath);
+
+        $this->seeInDatabase('posts', [
+            'image_path' => $imageRealSavePath,
+        ]);
+    }
+
+    /** @test * */
+    public function an_image_is_required_to_upload_image()
+    {
+        $response = $this->call('POST', '/posts', [], ['image' => null], []); // bad request call
+
+        $this->assertEquals(422, $response->getStatusCode());
+        $this->assertCount(0, Storage::disk('public')->allFiles('images'));
+    }
+
+    /** @test * */
+    public function an_image_must_have_the_proper_type_to_be_saved()
+    {
+        Storage::fake('public');
+        $badImage = UploadedFile::fake()->create('test . exe');
+        $response = $this->uploadImage($badImage);
+        $this->assertEquals(422, $response->getStatusCode());
     }
 }

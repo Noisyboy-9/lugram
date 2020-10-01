@@ -12,18 +12,15 @@ class ImageUploadTest extends TestCase
     use DatabaseTransactions;
 
     /** @test * */
-    public function an_image_can_be_uploaded()
+    public function an_image_can_be_uploaded_and_it_will_be_saved_to_public_disk_inside_images_folder()
     {
-        $this->withoutExceptionHandling();
-
-//        given we have a storage and an image
         Storage::fake('public');
         $image = UploadedFile::fake()->image('test.jpg');
 
 
-//        when we request the /posts point the image will be saved
         $this->call('POST', '/posts', [], [], ['image' => $image]);
-//        then an image is in the storage
-        $this->assertFileExists('test.jpg');
+
+        $this->assertCount(1, Storage::disk('public')->allDirectories());
+        $this->assertCount(1, Storage::disk('public')->allFiles('images'));
     }
 }

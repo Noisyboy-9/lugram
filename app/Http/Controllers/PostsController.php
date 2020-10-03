@@ -14,7 +14,7 @@ class PostsController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    private function validateRequest(Request $request): void
+    private function validatePost(Request $request): void
     {
         $this->validate($request, [
             'image' => 'required|file|image|mimes:jpeg,png,web,jpg',
@@ -31,7 +31,7 @@ class PostsController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $this->validateRequest($request);
+        $this->validatePost($request);
 
         $image = $request->file('image');
 

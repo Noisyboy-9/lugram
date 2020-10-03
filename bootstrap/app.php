@@ -1,5 +1,7 @@
 <?php
 
+use Dusterio\LumenPassport\Lumen7Application;
+use Dusterio\LumenPassport\PassportServiceProvider;
 use Flipbox\LumenGenerator\LumenGeneratorServiceProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -21,10 +23,9 @@ date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 |
 */
 
-$app = new Laravel\Lumen\Application(
+$app = new Lumen7Application(
     dirname(__DIR__)
 );
-
 $app->withFacades();
 
 $app->withEloquent();
@@ -62,7 +63,7 @@ $app->singleton(
 */
 
 $app->configure('app');
-
+$app->configure('auth');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -78,9 +79,9 @@ $app->configure('app');
 //     App\Http\Middleware\ExampleMiddleware::class
 // ]);
 //
-//$app->routeMiddleware([
-//    'auth' => App\Http\Middleware\Authenticate::class,
-//]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -92,9 +93,12 @@ $app->configure('app');
 | totally optional, so you are not required to uncomment this line.
 |
 */
-
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
+$app->register(\Laravel\Passport\PassportServiceProvider::class);
+$app->register(PassportServiceProvider::class);
 $app->register(LumenGeneratorServiceProvider::class);
-// $app->register(App\Providers\EventServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

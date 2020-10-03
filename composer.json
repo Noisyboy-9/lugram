@@ -9,11 +9,10 @@
     "license" : "MIT",
     "type" : "project",
     "require" : {
-        "php": "^7.3",
-        "dusterio/lumen-passport": "^0.3.1",
-        "flipbox/lumen-generator": "^8.0",
-        "laravel/lumen-framework": "^8.0",
-        "league/flysystem": "^1.1"
+        "php" : "^7.3",
+        "flipbox/lumen-generator" : "^8.0",
+        "laravel/lumen-framework" : "^8.0",
+        "league/flysystem" : "^1.1"
     },
     "require-dev" : {
         "fzaninotto/faker" : "^1.9.1",

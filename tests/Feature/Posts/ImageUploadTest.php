@@ -58,11 +58,4 @@ class ImageUploadTest extends TestCase
         $this->assertEquals(422, $response->getStatusCode());
     }
 
-    /** @test * */
-    public function test_oauth()
-    {
-        $this->withoutExceptionHandling();
-        $responnse = $this->get('');
-        dd($responnse);
-    }
 }

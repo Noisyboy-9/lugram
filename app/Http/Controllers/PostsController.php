@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,7 +21,15 @@ class PostsController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * create a post and store itself and also it's image in the database
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): JsonResponse
     {
         $this->validateRequest($request);
 
@@ -29,9 +38,7 @@ class PostsController extends Controller
         $path = Storage::disk('public')->getAdapter()->getPathPrefix() . '/images';
         $hashedName = $image->hashName();
 
-        $image->move($path, $hashedName);
-
-        $imageRealSavePath = realpath($path . "\\" . $hashedName);
+        $imageRealSavePath = $image->move($path, $hashedName)->getRealPath();
 
         Post::create([
             'image_path' => $imageRealSavePath,
@@ -42,4 +49,5 @@ class PostsController extends Controller
             'image_path' => $imageRealSavePath,
         ], 201);
     }
+
 }

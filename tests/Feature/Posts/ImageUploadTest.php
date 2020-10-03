@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
+
 class ImageUploadTest extends TestCase
 {
     use DatabaseMigrations;
@@ -16,17 +17,17 @@ class ImageUploadTest extends TestCase
      *
      * @param \Illuminate\Http\Testing\File $image
      */
-    private function uploadImage($image)
+    private function uploadImage($image = null)
     {
         return $this->call('POST', '/posts', [], [], ['image' => $image]);
     }
 
     /** @test * */
-    public function a_image_can_be_uploaded_and_it_will_be_saved_to_public_disk_inside_images_folder_and_path_will_be_saved()
+    public function an_authenticated_user_can_uploaded_a_image_and_it_will_be_saved_images_folder_and_its_path_will_be_saved()
     {
         Storage::fake('public');
         $image = UploadedFile::fake()->image('test.jpg');
-        $reponse = $this->uploadImage($image);
+        $this->uploadImage($image);
 
         $this->assertCount(1, Storage::disk('public')->allDirectories());
         $this->assertCount(1, Storage::disk('public')->allFiles('images'));
@@ -55,5 +56,13 @@ class ImageUploadTest extends TestCase
         $badImage = UploadedFile::fake()->create('test . exe');
         $response = $this->uploadImage($badImage);
         $this->assertEquals(422, $response->getStatusCode());
+    }
+
+    /** @test * */
+    public function test_oauth()
+    {
+        $this->withoutExceptionHandling();
+        $responnse = $this->get('');
+        dd($responnse);
     }
 }

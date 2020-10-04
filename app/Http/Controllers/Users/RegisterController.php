@@ -33,8 +33,8 @@ class RegisterController extends Controller
     {
 
         return $this->validate($request, [
-            'username' => 'required|string|min:3',
-            'email' => 'required|email:rfc',
+            'username' => 'required|string|unique:users|min:3',
+            'email' => 'required|email:rfc|unique:users',
             'password' => 'required|confirmed|string|min:5',
         ]);
     }

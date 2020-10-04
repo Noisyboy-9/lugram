@@ -91,5 +91,57 @@ class UserRegisterTest extends TestCase
         $this->assertEquals('password', $password);
     }
 
+    /** @test * */
+    public function a_user_name_is_required_to_create_a_user()
+    {
+        $user = $this->makeUser(['username' => null]); // bad username
 
+        $this->post('/auth/register', $user)->assertResponseStatus(422);
+
+        $this->notSeeInDatabase('users', [
+            'username' => $user['username'],
+            'email' => $user['email'],
+        ]);
+    }
+
+    /** @test * */
+    public function a_username_must_be_unique_to_create_a_user()
+    {
+        $user1 = $this->createUser(['username' => 'same_username']);
+        $user2 = $this->makeUser(['username' => 'same_username']);
+
+        $this->post('/auth/register', $user2)->assertResponseStatus(422);
+
+        $this->notSeeInDatabase('users', [
+            'username' => $user2['username'],
+            'email' => $user2['email'],
+        ]);
+    }
+
+    /** @test * */
+    public function an_email_is_required_to_create_a_user()
+    {
+        $user = $this->makeUser(['email' => null]); //bad email
+
+        $this->post('/auth/register', $user)->assertResponseStatus(422);
+
+        $this->notSeeInDatabase('users', [
+            'username' => $user['username'],
+            'email' => $user['email'],
+        ]);
+    }
+
+    /** @test * */
+    public function an_email_must_be_unique_to_create_a_user()
+    {
+        $user1 = $this->createUser(['email' => 'same@email.com']);
+        $user2 = $this->makeUser(['email' => 'same@email.com']);
+
+        $this->post('/auth/register', $user2)->assertResponseStatus(422);
+
+        $this->notSeeInDatabase('users', [
+            'username' => $user2['username'],
+            'email' => $user2['email'],
+        ]);
+    }
 }

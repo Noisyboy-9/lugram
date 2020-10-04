@@ -21,12 +21,6 @@ class LoginTest extends TestCase
             'email' => $user['email'],
             'password' => $user['password'],
         ])->shouldReturnJson()
-            ->seeJsonStructure(['users', 'access_token'])
-            ->seeJson([
-                'user' => [
-                    'email' => $user['email'],
-                    'username' => $user['username'],
-                ],
-            ]);
+            ->seeJsonStructure(['access_token']);
     }
 }

@@ -12,9 +12,14 @@ class LoginController extends Controller
     public function index(Request $request)
     {
         $attributes = $this->validateLogin($request);
-        $hash = DB::table('users')->pluck('password');
 
-        dd(auth()->attempt($attributes));
+        if ($this->isMember($attributes) && $this->isInputPasswordCorrect($attributes)) {
+            $id = DB::table('users')->where('email', $attributes['email'])->pluck('id')[0];
+
+            return $this->respondWithToken(auth()->tokenById($id));
+        }
+
+        return response()->json(['message' => 'Email and password combination does not match out records!'], 401);
     }
 
     private function validateLogin(Request $request)
@@ -39,5 +44,12 @@ class LoginController extends Controller
         return $attributes['password'] === Crypt::decrypt($hashedPassword);
     }
 
-
+    private function respondWithToken(string $token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+        ]);
+    }
 }

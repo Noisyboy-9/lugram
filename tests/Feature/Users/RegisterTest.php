@@ -16,8 +16,11 @@ class RegisterTest extends TestCase
     public function a_user_can_be_registered()
     {
         $user = $this->makeUser();
+        $user['password'] = 'password';
+        $user['password_confirmation'] = 'password';
 
-        $this->post('/auth/register', $user)
+
+        $test = $this->post('/auth/register', $user)
             ->shouldReturnJson()
             ->seeJsonStructure(['user', 'created'])
             ->seeJson(['created' => true])
@@ -27,7 +30,6 @@ class RegisterTest extends TestCase
                     'username' => $user['username'],
                 ],
             ]);
-
 
         $this->seeInDatabase('users', [
             'username' => $user['username'],

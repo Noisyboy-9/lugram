@@ -5,10 +5,13 @@ namespace AppTests\Feature\Posts;
 use AppTests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 
 
 class ImageUploadTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /**
      * hit image upload end point with the provided image
      *

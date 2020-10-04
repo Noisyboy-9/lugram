@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
+use App\Providers\AuthServiceProvider;
 use Flipbox\LumenGenerator\LumenGeneratorServiceProvider;
+use Tymon\JWTAuth\Providers\LumenServiceProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -62,7 +65,7 @@ $app->singleton(
 */
 
 $app->configure('app');
-
+$app->configure('auth');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -78,9 +81,9 @@ $app->configure('app');
 //     App\Http\Middleware\ExampleMiddleware::class
 // ]);
 //
-//$app->routeMiddleware([
-//    'auth' => App\Http\Middleware\Authenticate::class,
-//]);
+$app->routeMiddleware([
+    'auth' => Authenticate::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +96,8 @@ $app->configure('app');
 |
 */
 
+$app->register(AuthServiceProvider::class);
+$app->register(LumenServiceProvider::class);
 $app->register(LumenGeneratorServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 

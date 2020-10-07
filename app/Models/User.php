@@ -43,4 +43,5 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $this->attributes['password'] = Crypt::encrypt($password);
     }
+
 }

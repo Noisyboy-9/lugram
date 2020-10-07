@@ -39,7 +39,8 @@ class ImageUploadTest extends TestCase
     /** @test * */
     public function an_authenticated_user_can_uploaded_a_image_and_it_will_be_saved_images_folder_and_its_path_will_be_saved()
     {
-        $this->login();
+        $user = $this->login();
+
         Storage::fake('public');
         $image = UploadedFile::fake()->image('test.jpg');
         $this->uploadImage($image);
@@ -52,6 +53,7 @@ class ImageUploadTest extends TestCase
 
         $this->seeInDatabase('posts', [
             'image_path' => $imageRealSavePath,
+//            'user_id' => ,
         ]);
     }
 

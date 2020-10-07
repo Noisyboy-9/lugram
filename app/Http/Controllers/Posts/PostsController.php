@@ -43,6 +43,7 @@ class PostsController extends Controller
 
         Post::create([
             'image_path' => $imageRealSavePath,
+            'user_id' => auth()->id(),
         ]);
 
         return response()->json([

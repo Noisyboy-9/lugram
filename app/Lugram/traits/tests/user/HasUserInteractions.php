@@ -62,6 +62,7 @@ trait HasUserInteractions
     {
         if (! $user) $user = User::factory()->make();
 
+        $user->save();
         $this->actingAs($user);
 
         return $user;

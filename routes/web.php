@@ -1,7 +1,10 @@
 <?php
 
 /** @var \Laravel\Lumen\Routing\Router $router */
-$router->post('/posts', 'Posts\PostsController@store');
+$router->post('/posts', [
+    'middleware' => 'auth',
+    'uses' => 'Posts\PostsController@store',
+]);
 
 $router->group(['prefix' => '/auth'], function () use ($router) {
     $router->post('/register', 'Users\RegisterController@store');

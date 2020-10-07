@@ -2,6 +2,7 @@
 
 namespace AppTests\Feature\Posts;
 
+use App\Lugram\traits\tests\user\HasUserInteractions;
 use AppTests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -10,7 +11,7 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 
 class ImageUploadTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseMigrations, HasUserInteractions;
 
     /**
      * hit image upload end point with the provided image
@@ -20,6 +21,19 @@ class ImageUploadTest extends TestCase
     private function uploadImage($image = null)
     {
         return $this->call('POST', '/posts', [], [], ['image' => $image]);
+    }
+
+    /** @test * */
+    public function a_guest_can_not_make_a_new_post()
+    {
+        Storage::fake('public');
+        $image = UploadedFile::fake()->image('test.jpg');
+
+        $response = $this->uploadImage($image);
+
+        $this->assertEquals(401, $response->getStatusCode());
+
+        $this->assertEquals('Unauthorized.', $response->content());
     }
 
     /** @test * */

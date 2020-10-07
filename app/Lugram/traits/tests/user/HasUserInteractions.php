@@ -50,4 +50,22 @@ trait HasUserInteractions
 
         return $users->toArray();
     }
+
+    /**
+     * login the user
+     *
+     * @param null $user
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    protected function login($user = null)
+    {
+        if (! $user) {
+            $user = User::factory()->make();
+        }
+
+        $this->actingAs($user);
+
+        return $user;
+    }
 }

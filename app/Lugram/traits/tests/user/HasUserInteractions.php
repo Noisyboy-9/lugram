@@ -60,9 +60,7 @@ trait HasUserInteractions
      */
     protected function login($user = null)
     {
-        if (! $user) {
-            $user = User::factory()->make();
-        }
+        if (! $user) $user = User::factory()->make();
 
         $this->actingAs($user);
 

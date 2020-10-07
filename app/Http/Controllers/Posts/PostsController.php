@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Posts;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -41,9 +40,8 @@ class PostsController extends Controller
 
         $imageRealSavePath = $image->move($path, $hashedName)->getRealPath();
 
-        Post::create([
+        auth()->user()->posts()->create([
             'image_path' => $imageRealSavePath,
-            'user_id' => auth()->id(),
         ]);
 
         return response()->json([

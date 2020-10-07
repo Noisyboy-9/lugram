@@ -44,4 +44,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->attributes['password'] = Crypt::encrypt($password);
     }
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

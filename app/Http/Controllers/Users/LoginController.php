@@ -18,7 +18,7 @@ class LoginController extends Controller
      */
     public function index(Request $request)
     {
-        $attributes = $this->validateLogin($request);
+        $attributes = $this->validateLoginRequest($request);
 
         if ($this->isInputEmailStored($request) && $this->isInputPasswordMatch($request)) {
             $token = auth()->tokenById($this->getUserId($request));
@@ -37,7 +37,7 @@ class LoginController extends Controller
      * @return array
      * @throws \Illuminate\Validation\ValidationException
      */
-    private function validateLogin(Request $request)
+    private function validateLoginRequest(Request $request)
     {
         return $this->validate($request, [
             'email' => 'required|email:rfc',

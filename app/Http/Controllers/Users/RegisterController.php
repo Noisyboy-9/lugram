@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 
 
 class RegisterController extends Controller
 {
+    /**
+     * store a user to the database
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
-        $user = $this->validateUser($request);
+        $user = $this->validateRegisterRequest($request);
 
         User::create([
             'username' => $user['username'],
@@ -29,7 +35,15 @@ class RegisterController extends Controller
         ], 201);
     }
 
-    private function validateUser(Request $request)
+    /**
+     * validate the register request data
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return array
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function validateRegisterRequest(Request $request)
     {
 
         return $this->validate($request, [
@@ -39,9 +53,4 @@ class RegisterController extends Controller
         ]);
     }
 
-
-    private function hashPassword(string $password)
-    {
-        return Crypt::encrypt($password);
-    }
 }

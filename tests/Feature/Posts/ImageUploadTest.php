@@ -39,6 +39,7 @@ class ImageUploadTest extends TestCase
     /** @test * */
     public function an_authenticated_user_can_uploaded_a_image_and_it_will_be_saved_images_folder_and_its_path_will_be_saved()
     {
+        $this->login();
         Storage::fake('public');
         $image = UploadedFile::fake()->image('test.jpg');
         $this->uploadImage($image);
@@ -57,6 +58,7 @@ class ImageUploadTest extends TestCase
     /** @test * */
     public function an_image_is_required_to_upload_image()
     {
+        $this->login();
         $response = $this->call('POST', '/posts', [], ['image' => null], []); // bad request call
 
         $this->assertEquals(422, $response->getStatusCode());
@@ -66,6 +68,7 @@ class ImageUploadTest extends TestCase
     /** @test * */
     public function an_image_must_have_the_proper_type_to_be_saved()
     {
+        $this->login();
         Storage::fake('public');
         $badImage = UploadedFile::fake()->create('test . exe');
         $response = $this->uploadImage($badImage);

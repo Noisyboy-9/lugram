@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
+    /**
+     * authenticate user and return a token
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
         $attributes = $this->validateLogin($request);
@@ -22,6 +29,14 @@ class LoginController extends Controller
         return response()->json(['message' => 'Email and password combination does not match! Please try again.'], 401);
     }
 
+    /**
+     * validate the input data for logging in
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return array
+     * @throws \Illuminate\Validation\ValidationException
+     */
     private function validateLogin(Request $request)
     {
         return $this->validate($request, [
@@ -30,11 +45,25 @@ class LoginController extends Controller
         ]);
     }
 
+    /**
+     * check if the input email coming from request is stored in the database
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return bool
+     */
     private function isInputEmailStored(Request $request)
     {
         return DB::table('users')->where('email', $request['email'])->exists();
     }
 
+    /**
+     * check if the password and email combination actually match with data stored in database
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return bool
+     */
     private function isInputPasswordMatch(Request $request)
     {
         $hashedPassword = DB::table('users')->where('email', $request['email'])->pluck('password')[0];
@@ -44,6 +73,13 @@ class LoginController extends Controller
         return $password === $request['password'];
     }
 
+    /**
+     * send response containing token and token type
+     *
+     * @param string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     private function respondWithToken(string $token)
     {
         return response()->json([
@@ -53,6 +89,13 @@ class LoginController extends Controller
         ], 200);
     }
 
+    /**
+     * Get newly successfully logged in user's id
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return mixed
+     */
     private function getUserId(Request $request)
     {
         return DB::table('users')->where('email', $request['email'])->pluck('id')[0];

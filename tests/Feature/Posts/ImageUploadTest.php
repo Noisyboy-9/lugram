@@ -56,6 +56,8 @@ class ImageUploadTest extends TestCase
             'image_path' => $imageRealSavePath,
             'user_id' => auth()->id(),
         ]);
+
+        $this->assertCount(1, $user->posts);
     }
 
     /** @test * */

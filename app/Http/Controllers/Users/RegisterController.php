@@ -17,7 +17,7 @@ class RegisterController extends Controller
         User::create([
             'username' => $user['username'],
             'email' => $user['email'],
-            'password' => $this->hashPassword($user['password']),
+            'password' => $user['password'],
         ]);
 
         return response()->json([

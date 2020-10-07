@@ -44,7 +44,7 @@ class RegisterTest extends TestCase
 
         $this->post('/auth/register', $user);
 
-        $hashedPassword = DB::table('users')->first()->password;
+        $hashedPassword = DB::table('users')->pluck('password')[0];
         $password = Crypt::decrypt($hashedPassword);
 
         $this->assertEquals('password', $password);

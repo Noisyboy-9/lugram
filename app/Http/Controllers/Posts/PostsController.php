@@ -21,6 +21,13 @@ class PostsController extends Controller
         ]);
     }
 
+    public function index()
+    {
+        $posts = auth()->user()->posts;
+
+        return response()->json(['posts' => $posts->toArray()]);
+    }
+
     /**
      * create a post and store itself and also it's image in the database
      *
@@ -49,5 +56,4 @@ class PostsController extends Controller
             'image_path' => $imageRealSavePath,
         ], 201);
     }
-
 }

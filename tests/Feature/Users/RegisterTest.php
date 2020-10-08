@@ -15,12 +15,16 @@ class RegisterTest extends TestCase
     /** @test * */
     public function a_user_can_be_registered()
     {
+        $this->withoutExceptionHandling();
         $user = $this->makeUser();
-        $user['password'] = 'password';
-        $user['password_confirmation'] = 'password';
+        $user->password = 'password';
 
-
-        $test = $this->post('/auth/register', $user)
+        $test = $this->post('/auth/register', [
+            'username' => $user->username,
+            'email' => $user->email,
+            'password' => $user->password,
+            'password_confirmation' => $user->password,
+        ])
             ->shouldReturnJson()
             ->seeJsonStructure(['user', 'created'])
             ->seeJson(['created' => true])
@@ -42,7 +46,7 @@ class RegisterTest extends TestCase
     {
         $user = $this->createUser();
 
-        $this->post('/auth/register', $user);
+        $this->post('/auth/register', $user->toArray());
 
         $hashedPassword = DB::table('users')->pluck('password')[0];
         $password = Crypt::decrypt($hashedPassword);
@@ -55,7 +59,7 @@ class RegisterTest extends TestCase
     {
         $user = $this->makeUser(['username' => null]); // bad username
 
-        $this->post('/auth/register', $user)->assertResponseStatus(422);
+        $this->post('/auth/register', $user->toArray())->assertResponseStatus(422);
 
         $this->notSeeInDatabase('users', [
             'username' => $user['username'],
@@ -69,7 +73,7 @@ class RegisterTest extends TestCase
         $user1 = $this->createUser(['username' => 'same_username']);
         $user2 = $this->makeUser(['username' => 'same_username']);
 
-        $this->post('/auth/register', $user2)->assertResponseStatus(422);
+        $this->post('/auth/register', $user2->toArray())->assertResponseStatus(422);
 
         $this->notSeeInDatabase('users', [
             'username' => $user2['username'],
@@ -82,7 +86,7 @@ class RegisterTest extends TestCase
     {
         $user = $this->makeUser(['email' => null]); //bad email
 
-        $this->post('/auth/register', $user)->assertResponseStatus(422);
+        $this->post('/auth/register', $user->toArray())->assertResponseStatus(422);
 
         $this->notSeeInDatabase('users', [
             'username' => $user['username'],
@@ -96,7 +100,7 @@ class RegisterTest extends TestCase
         $user1 = $this->createUser(['email' => 'same@email.com']);
         $user2 = $this->makeUser(['email' => 'same@email.com']);
 
-        $this->post('/auth/register', $user2)->assertResponseStatus(422);
+        $this->post('/auth/register', $user2->toArray())->assertResponseStatus(422);
 
         $this->notSeeInDatabase('users', [
             'username' => $user2['username'],

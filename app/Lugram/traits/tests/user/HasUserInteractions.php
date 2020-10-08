@@ -26,9 +26,9 @@ trait HasUserInteractions
             $user['password_confirmation'] = $user['password'];
         }
 
-        if ($count === 1) return $users->toArray()[0];
+        if ($count === 1) return $users[0];
 
-        return $users->toArray();
+        return $users;
     }
 
     /**
@@ -46,9 +46,9 @@ trait HasUserInteractions
         $users = User::factory()->count($count)->make($attributes);
         foreach ($users as $user) $user->save();
 
-        if ($count === 1) return $users->toArray()[0];
+        if ($count === 1) return $users[0];
 
-        return $users->toArray();
+        return $users;
     }
 
     /**

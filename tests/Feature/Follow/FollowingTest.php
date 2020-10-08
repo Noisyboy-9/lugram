@@ -1,16 +1,16 @@
 <?php
 
+namespace AppTests\Feature\Follow;
+
+use AppTests\TestCase;
 use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class FollowingTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testExample()
+    use DatabaseMigrations;
+
+    /** @test * */
+    public function a_test()
     {
         $this->assertTrue(true);
     }

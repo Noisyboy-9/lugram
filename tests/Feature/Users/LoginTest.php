@@ -14,12 +14,11 @@ class LoginTest extends TestCase
     public function a_user_with_already_created_account_can_logged_in()
     {
         $this->withoutExceptionHandling();
-        $user = $this->createUser();
-        $user['password'] = 'password';
+        $user = $this->createUser(['password' => 'password']);
 
-        $this->post('/auth/login', [
-            'email' => $user['email'],
-            'password' => $user['password'],
+        $response = $this->post('/auth/login', [
+            'email' => $user->email,
+            'password' => 'password',
         ])->shouldReturnJson()
             ->seeJsonStructure(['access_token']);
     }

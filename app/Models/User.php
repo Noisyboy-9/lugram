@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Lugram\traits\user\HasApiTokens;
+use App\Lugram\traits\user\HasFollowers;
+use App\Lugram\traits\user\HasFollowings;
 use App\Lugram\traits\user\HasManyPosts;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -15,7 +17,13 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
-    use Authenticatable, Authorizable, HasFactory, HasApiTokens, HasManyPosts;
+    use Authenticatable,
+        Authorizable,
+        HasFactory,
+        HasApiTokens,
+        HasManyPosts,
+        HasFollowers,
+        HasFollowings;
 
     /**
      * The attributes that are mass assignable.
@@ -45,30 +53,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->attributes['password'] = Crypt::encrypt($password);
     }
 
-    public function follow(User $user)
-    {
-        $this->followings()->attach($user);
-    }
-
-    public function followings()
-    {
-        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
-
-    }
-
-    public function followers()
-    {
-        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
-
-    }
-
-    public function isFollowerOf(User $user)
-    {
-        return $this->followings->contains($user);
-    }
-
-    public function isFollowingOf(User $user)
-    {
-        return $this->followers->contains($user);
-    }
 }

@@ -59,5 +59,25 @@ class UserTest extends TestCase
         $this->assertTrue($jane->followers->contains($jhon));
     }
 
+    /** @test * */
+    public function it_can_know_if_is_follower_of_another_user()
+    {
+        $jhon = $this->login();
+        $jane = $this->createUser();
 
+        $jhon->follow($jane);
+
+        $this->assertTrue($jhon->isFollowerOf($jane));
+    }
+
+    /** @test * */
+    public function it_can_know_if_it_has_another_user_as_following()
+    {
+        $jhon = $this->login();
+        $jane = $this->createUser();
+
+        $jhon->follow($jane);
+
+        $this->assertTrue($jane->isFollowingOf($jhon));
+    }
 }

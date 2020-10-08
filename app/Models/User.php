@@ -61,4 +61,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
 
     }
+
+    public function isFollowerOf(User $user)
+    {
+        return $this->followings->contains($user);
+    }
+
+    public function isFollowingOf(User $user)
+    {
+        return $this->followers->contains($user);
+    }
 }

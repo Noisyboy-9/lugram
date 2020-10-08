@@ -31,5 +31,8 @@ class FollowerTest extends TestCase
             'follower_id' => $jhon->id,
             'following_id' => $jane->id,
         ]);
+
+        $this->assertTrue($jhon->isFollowerOf($jane));
+        $this->assertTrue($jane->isFollowingOf($jhon));
     }
 }

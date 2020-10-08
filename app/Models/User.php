@@ -44,4 +44,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $this->attributes['password'] = Crypt::encrypt($password);
     }
+
+    public function follow(User $user)
+    {
+        $this->followings()->attach($user);
+    }
+
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
+
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
+
+    }
 }

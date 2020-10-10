@@ -12,7 +12,7 @@ $router->group(['prefix' => '/auth'], function () use ($router) {
     $router->post('/login', 'Users\LoginController@index');
 });
 
-$router->post('/follow/{userId}', [
+$router->post('/requests/{userId}', [
     'middleware' => 'auth',
     'uses' => 'Followers\FollowersController@store',
 ]);

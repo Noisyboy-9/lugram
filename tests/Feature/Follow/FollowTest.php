@@ -6,7 +6,7 @@ use App\Lugram\traits\tests\user\HasUserInteractions;
 use AppTests\TestCase;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class FollowerTest extends TestCase
+class FollowTest extends TestCase
 {
     use DatabaseMigrations, HasUserInteractions;
 
@@ -18,7 +18,7 @@ class FollowerTest extends TestCase
         $jhon = $this->login();
         $jane = $this->createUser();
 
-        $this->post('/follow/' . $jane->id)
+        $this->post('/requests/' . $jane->id)
             ->shouldReturnJson()
             ->seeJson(['followed' => true])
             ->assertResponseStatus(201);
@@ -37,7 +37,7 @@ class FollowerTest extends TestCase
     {
         $jhon = $this->createUser();
 
-        $this->post('/follow/' . $jhon->id)
+        $this->post('/requests/' . $jhon->id)
             ->seeStatusCode(401);
 
         $this->notSeeInDatabase('follows', [
@@ -53,7 +53,7 @@ class FollowerTest extends TestCase
         $this->withoutExceptionHandling();
         $jhon = $this->login();
 
-        $this->post('/follow/' . 12)
+        $this->post('/requests/' . 12)
             ->seeJson(['message' => 'not found'])
             ->assertResponseStatus(404);// bad id : id does not relate to any known user
 

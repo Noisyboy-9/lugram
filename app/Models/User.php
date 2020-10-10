@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Lugram\Managers\FollowRequestStatusManager;
 use App\Lugram\traits\user\HasApiTokens;
 use App\Lugram\traits\user\HasFollowers;
 use App\Lugram\traits\user\HasFollowings;
@@ -12,6 +13,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -34,7 +37,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password',
+        'username', 'email', 'password', 'status',
     ];
 
     /**
@@ -56,4 +59,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->attributes['password'] = Crypt::encrypt($password);
     }
 
+    public function requests()
+    {
+        return DB::table('follows')
+            ->where('following_id', $this->id)
+            ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
+            ->get();
+    }
+
+    public function makeFollowRequest(User $user)
+    {
+        DB::table('follows')->insert([
+            'follower_id' => $this->id,
+            'following_id' => $user->id,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
+            'created_at' => Date::now(),
+            'updated_at' => Date::now(),
+        ]);
+    }
 }

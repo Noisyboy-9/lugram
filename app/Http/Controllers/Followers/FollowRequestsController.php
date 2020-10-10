@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class FollowersController extends Controller
+class FollowRequestsController extends Controller
 {
     public function store($userId)
     {
@@ -17,8 +17,8 @@ class FollowersController extends Controller
             return response()->json(['message' => 'not found'], 404);
         }
 
-        auth()->user()->follow($user);
+        auth()->user()->makeFollowRequest($user);
 
-        return response()->json(['followed' => true], 201);
+        return response()->json(['requested' => true], 201);
     }
 }

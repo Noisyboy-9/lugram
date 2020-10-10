@@ -2,6 +2,7 @@
 
 namespace AppTests\Unit;
 
+use App\Lugram\Managers\FollowRequestStatusManager;
 use App\Lugram\traits\tests\user\HasUserInteractions;
 use App\Models\Post;
 use AppTests\TestCase;
@@ -22,6 +23,34 @@ class UserTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $user->posts);
         $this->assertEquals($post->id, $user->posts[0]->id);
+    }
+
+
+    /** @test * */
+    public function it_may_have_many_follow_requests()
+    {
+        $jhon = $this->login();
+        $jane = $this->createUser();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->assertInstanceOf(Collection::class, $jane->requests());
+        $this->assertCount(1, $jane->requests());
+    }
+
+    /** @test * */
+    public function it_can_make_a_follow_request_to_another_user()
+    {
+        $jhon = $this->login();
+        $jane = $this->createUser();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->seeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
+        ]);
     }
 
     /** @test * */

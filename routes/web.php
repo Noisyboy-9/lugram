@@ -14,5 +14,6 @@ $router->group(['prefix' => '/auth'], function () use ($router) {
 
 $router->post('/requests/{userId}', [
     'middleware' => 'auth',
-    'uses' => 'Followers\FollowersController@store',
+    'uses' => 'Followers\FollowRequestsController@store',
 ]);
+

@@ -2,16 +2,17 @@
 
 namespace AppTests\Feature\Follow;
 
+use App\Lugram\Managers\FollowRequestStatusManager;
 use App\Lugram\traits\tests\user\HasUserInteractions;
 use AppTests\TestCase;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
-class FollowTest extends TestCase
+class FollowRequestTest extends TestCase
 {
     use DatabaseMigrations, HasUserInteractions;
 
     /** @test * */
-    public function a_authenticated_user_can_follow_another_user()
+    public function a_authenticated_user_can_follow_another_user_and_follow_request_will_be_saved()
     {
         $this->withoutExceptionHandling();
 
@@ -20,12 +21,13 @@ class FollowTest extends TestCase
 
         $this->post('/requests/' . $jane->id)
             ->shouldReturnJson()
-            ->seeJson(['followed' => true])
+            ->seeJson(['requested' => true])
             ->assertResponseStatus(201);
 
         $this->seeInDatabase('follows', [
             'follower_id' => $jhon->id,
             'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
         ]);
 
         $this->assertTrue($jhon->isFollowerOf($jane));

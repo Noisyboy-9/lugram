@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Crypt;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @method static findOrFail($userId)
+ */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable,

@@ -3,7 +3,6 @@
 namespace AppTests\Feature\Follow;
 
 use App\Lugram\traits\tests\user\HasUserInteractions;
-use App\Models\User;
 use AppTests\TestCase;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
@@ -16,11 +15,8 @@ class FollowerTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $jhon = $this->login(
-            User::factory()->make(['username' => 'jhon'])
-        );
-
-        $jane = $this->createUser(['username' => 'jane']);
+        $jhon = $this->login();
+        $jane = $this->createUser();
 
         $this->post('/follow/' . $jane->id)
             ->shouldReturnJson()
@@ -34,5 +30,35 @@ class FollowerTest extends TestCase
 
         $this->assertTrue($jhon->isFollowerOf($jane));
         $this->assertTrue($jane->isFollowingOf($jhon));
+    }
+
+    /** @test * */
+    public function a_user_must_be_authenticated_to_another_user()
+    {
+        $jhon = $this->createUser();
+
+        $this->post('/follow/' . $jhon->id)
+            ->seeStatusCode(401);
+
+        $this->notSeeInDatabase('follows', [
+            'following_id' => $jhon->id,
+        ]);
+
+        $this->assertCount(0, $jhon->followings);
+    }
+
+    /** @test * */
+    public function a_user_must_exist_in_order_for_another_user_to_follow()
+    {
+        $this->withoutExceptionHandling();
+        $jhon = $this->login();
+
+        $this->post('/follow/' . 12)
+            ->seeJson(['message' => 'not found'])
+            ->assertResponseStatus(404);// bad id : id does not relate to any known user
+
+        $this->notSeeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+        ]);
     }
 }

@@ -12,8 +12,12 @@ $router->group(['prefix' => '/auth'], function () use ($router) {
     $router->post('/login', 'Users\LoginController@index');
 });
 
+
 $router->post('/requests/{userId}', [
     'middleware' => 'auth',
-    'uses' => 'Followers\FollowRequestsController@store',
+    'uses' => 'Follows\FollowRequestsController@store',
 ]);
-
+$router->put('/requests/{userId}/accept', [
+    'middleware' => 'auth',
+    'uses' => 'Follows\AcceptFollowRequestsController@update',
+]);

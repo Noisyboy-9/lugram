@@ -66,6 +66,38 @@ class UserTest extends TestCase
     }
 
     /** @test * */
+    public function it_may_accept_a_follow_request()
+    {
+        $this->withoutExceptionHandling();
+
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $jhon->makeFollowRequest($jane);
+
+        $jane->acceptRequest($jhon);
+
+        $this->assertTrue($jhon->isFollowerOf($jane));
+        $this->assertTrue($jane->isFollowingOf($jhon));
+        $this->assertTrue($jane->hasAcceptedRequestOf($jane));
+    }
+
+    /** @test * */
+    public function it_can_know_if_it_has_accepted_another_user_request()
+    {
+        $this->withoutExceptionHandling();
+
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $jhon->makeFollowRequest($jane);
+
+        $jane->acceptRequest($jhon);
+
+        $this->assertTrue($jane->hasAcceptedRequestOf($jhon));
+    }
+
+    /** @test * */
     public function it_may_have_many_followings()
     {
         $jhon = $this->login();

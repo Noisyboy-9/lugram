@@ -62,4 +62,35 @@ class FollowRequestTest extends TestCase
             'follower_id' => $jhon->id,
         ]);
     }
+
+    /** @test * */
+    public function an_authenticated_user_can_accept_a_follow_request()
+    {
+        $this->withoutExceptionHandling();
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->put('/requests/' . $jhon->id . '/accept')
+            ->shouldReturnJson()
+            ->seeJson(['accepted' => true])
+            ->assertResponseOk();
+
+        $this->seeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::ACCEPTED,
+        ]);
+
+        $this->notSeeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::DECLINED,
+        ]);
+
+        $this->assertTrue($jane->hasAcceptedRequestOf($jhon));
+        $this->assertTrue($jhon->isFollowerOf($jane));
+        $this->assertTrue($jane->isFollowingOf($jhon));
+    }
 }

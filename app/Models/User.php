@@ -77,4 +77,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'updated_at' => Date::now(),
         ]);
     }
+
+    public function acceptRequest(User $user)
+    {
+        DB::table('follows')
+            ->where('follower_id', $user->id)
+            ->where('following_id', $this->id)
+            ->update(['status' => FollowRequestStatusManager::ACCEPTED]);
+    }
+
+    public function hasAcceptedRequestOf(User $user)
+    {
+        return DB::table('follows')
+            ->where('follower_id', $user->id)
+            ->where('following_id', $this->id)
+            ->where('status', FollowRequestStatusManager::ACCEPTED)
+            ->exists();
+    }
 }

@@ -12,7 +12,7 @@ class FollowRequestTest extends TestCase
     use DatabaseMigrations, HasUserInteractions;
 
     /** @test * */
-    public function a_authenticated_user_can_follow_another_user_and_follow_request_will_be_saved()
+    public function a_authenticated_user_can_request_for_following_another_user()
     {
         $this->withoutExceptionHandling();
 
@@ -30,12 +30,11 @@ class FollowRequestTest extends TestCase
             'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
         ]);
 
-        $this->assertTrue($jhon->isFollowerOf($jane));
-        $this->assertTrue($jane->isFollowingOf($jhon));
+        $this->assertCount(1, $jane->requests());
     }
 
     /** @test * */
-    public function a_user_must_be_authenticated_to_another_user()
+    public function a_user_must_be_authenticated_to_request_following_another_user()
     {
         $jhon = $this->createUser();
 

@@ -93,4 +93,5 @@ class FollowRequestTest extends TestCase
         $this->assertTrue($jhon->isFollowerOf($jane));
         $this->assertTrue($jane->isFollowingOf($jhon));
     }
+
 }

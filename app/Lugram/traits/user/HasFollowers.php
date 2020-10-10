@@ -10,17 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasFollowers
 {
-
-    /**
-     * follow another user
-     *
-     * @param \App\Models\User $user
-     */
-    public function follow(User $user): void
-    {
-        $this->followings()->attach($user, ['status' => FollowRequestStatusManager::ACCEPTED]);
-    }
-
     /**
      * return users that have followed model
      *

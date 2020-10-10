@@ -79,11 +79,11 @@ class UserTest extends TestCase
 
         $this->assertTrue($jhon->isFollowerOf($jane));
         $this->assertTrue($jane->isFollowingOf($jhon));
-        $this->assertTrue($jane->hasAcceptedRequestOf($jane));
+        $this->assertTrue($jane->hasAcceptedRequestOf($jhon));
     }
 
     /** @test * */
-    public function it_can_know_if_it_has_accepted_another_user_request()
+    public function it_can_know_if_it_has_accepted_another_user()
     {
         $this->withoutExceptionHandling();
 
@@ -103,7 +103,10 @@ class UserTest extends TestCase
         $jhon = $this->login();
         $jane = $this->createUser();
 
-        $jhon->follow($jane);
+        $jhon->makeFollowRequest($jane);
+        $jane->acceptRequest($jhon);
+
+
         $this->assertInstanceOf(Collection::class, $jhon->followings);
         $this->assertTrue($jhon->followings->contains($jane));
     }
@@ -114,7 +117,8 @@ class UserTest extends TestCase
         $jhon = $this->login();
         $jane = $this->createUser();
 
-        $jhon->follow($jane);
+        $jhon->makeFollowRequest($jane);
+        $jane->acceptRequest($jhon);
 
         $this->assertInstanceOf(Collection::class, $jane->followers);
         $this->assertTrue($jane->followers->contains($jhon));
@@ -123,11 +127,12 @@ class UserTest extends TestCase
     /** @test * */
     public function it_can_follow_another_user()
     {
-        $this->withoutExceptionHandling();
         $jhon = $this->login();
         $jane = $this->createUser();
 
-        $jhon->follow($jane);
+        $jhon->makeFollowRequest($jane);
+        $jane->acceptRequest($jhon);
+
         $this->assertTrue($jhon->followings->contains($jane));
         $this->assertTrue($jane->followers->contains($jhon));
     }
@@ -138,7 +143,8 @@ class UserTest extends TestCase
         $jhon = $this->login();
         $jane = $this->createUser();
 
-        $jhon->follow($jane);
+        $jhon->makeFollowRequest($jane);
+        $jane->acceptRequest($jhon);
 
         $this->assertTrue($jhon->isFollowerOf($jane));
     }
@@ -149,7 +155,8 @@ class UserTest extends TestCase
         $jhon = $this->login();
         $jane = $this->createUser();
 
-        $jhon->follow($jane);
+        $jhon->makeFollowRequest($jane);
+        $jane->acceptRequest($jhon);
 
         $this->assertTrue($jane->isFollowingOf($jhon));
     }

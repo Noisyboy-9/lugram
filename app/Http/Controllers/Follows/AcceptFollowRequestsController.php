@@ -15,6 +15,9 @@ class AcceptFollowRequestsController extends Controller
         } catch (ModelNotFoundException $exception) {
             return response()->json(['message' => 'not found'], 404);
         }
+        if (!auth()->user()->hasAwaitingRequestFrom($user)) {
+            return response()->json(['message' => 'no request found from the user'], 406);
+        }
 
         auth()->user()->acceptRequest($user);
 

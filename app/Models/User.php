@@ -94,4 +94,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->where('status', FollowRequestStatusManager::ACCEPTED)
             ->exists();
     }
+
+    public function hasAwaitingRequestFrom(User $user)
+    {
+        return DB::table('follows')
+            ->where('follower_id', $user->id)
+            ->where('following_id', $this->id)
+            ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
+            ->exists();
+    }
 }

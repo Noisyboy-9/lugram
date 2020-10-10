@@ -66,7 +66,6 @@ class FollowRequestTest extends TestCase
     /** @test * */
     public function an_authenticated_user_can_accept_a_follow_request()
     {
-        $this->withoutExceptionHandling();
         $jhon = $this->createUser();
         $jane = $this->login();
 
@@ -86,7 +85,7 @@ class FollowRequestTest extends TestCase
         $this->notSeeInDatabase('follows', [
             'follower_id' => $jhon->id,
             'following_id' => $jane->id,
-            'status' => FollowRequestStatusManager::DECLINED,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
         ]);
 
         $this->assertTrue($jane->hasAcceptedRequestOf($jhon));
@@ -94,4 +93,67 @@ class FollowRequestTest extends TestCase
         $this->assertTrue($jane->isFollowingOf($jhon));
     }
 
+    /** @test * */
+    public function an_user_must_must_be_authenticated_to_accept_a_request()
+    {
+        $jhon = $this->createUser();
+        $jane = $this->createUser();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->put('/requests/' . $jhon->id . '/accept')
+            ->assertResponseStatus(401);
+
+
+        $this->notSeeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::ACCEPTED,
+        ]);
+
+        $this->seeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
+        ]);
+    }
+
+    /** @test * */
+    public function a_request_must_first_exist_in_order_to_be_able_to_accept_it()
+    {
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $this->put('/requests/' . $jhon->id . '/accept')
+            ->shouldReturnJson()
+            ->seeJson(['message' => 'no request found from the user'])
+            ->seeStatusCode(406);
+
+    }
+
+    /** @test * */
+    public function a_request_must_be_in_awaiting_status_in_order_to_be_able_to_accept_it()
+    {
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $jhon->makeFollowRequest($jane);
+        $jane->acceptRequest($jhon);
+
+        $this->put('/requests/' . $jhon->id . '/accept')
+            ->shouldReturnJson()
+            ->seeJson(['message' => 'no request found from the user'])
+            ->seeStatusCode(406);
+    }
+
+    /** @test * */
+    public function request_of_a_valid_user_id_can_be_accepted()
+    {
+        $jane = $this->login();
+
+        $this->put('/requests/' . 123 . '/accept')
+            ->shouldReturnJson()
+            ->seeJson(['message' => 'not found'])
+            ->seeStatusCode(404);
+    }
 }

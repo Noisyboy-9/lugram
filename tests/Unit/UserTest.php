@@ -66,6 +66,17 @@ class UserTest extends TestCase
     }
 
     /** @test * */
+    public function it_can_know_if_it_has_awaiting_request_from_another_user()
+    {
+        $jhon = $this->login();
+        $jane = $this->createUser();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->assertTrue($jane->hasAwaitingRequestFrom($jhon));
+    }
+
+    /** @test * */
     public function it_may_accept_a_follow_request()
     {
         $this->withoutExceptionHandling();

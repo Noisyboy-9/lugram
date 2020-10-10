@@ -156,4 +156,35 @@ class FollowRequestTest extends TestCase
             ->seeJson(['message' => 'not found'])
             ->seeStatusCode(404);
     }
+
+    /** @test * */
+    public function an_authenticated_user_can_decline_a_follow_request()
+    {
+        $this->withoutExceptionHandling();
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->put('/requests/' . $jhon->id . '/decline')
+            ->shouldReturnJson()
+            ->seeJson(['declined' => true])
+            ->assertResponseOk();
+
+        $this->seeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::DECLINED,
+        ]);
+
+        $this->notSeeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
+        ]);
+
+        $this->assertFalse($jane->hasAcceptedRequestOf($jhon));
+        $this->assertFalse($jhon->isFollowerOf($jane));
+        $this->assertFalse($jane->isFollowingOf($jhon));
+    }
 }

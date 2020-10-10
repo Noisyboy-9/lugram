@@ -21,3 +21,8 @@ $router->put('/requests/{userId}/accept', [
     'middleware' => 'auth',
     'uses' => 'Follows\AcceptFollowRequestsController@update',
 ]);
+
+$router->put('/requests/{userId}/decline', [
+    'middleware' => 'auth',
+    'uses' => 'Follows\DeclineFollowRequestsController@update',
+]);

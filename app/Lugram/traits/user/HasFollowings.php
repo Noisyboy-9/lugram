@@ -4,6 +4,7 @@
 namespace App\Lugram\traits\user;
 
 
+use App\Lugram\Managers\FollowRequestStatusManager;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -29,7 +30,7 @@ trait HasFollowings
      */
     public function followings(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
-
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')
+            ->wherePivot('status', FollowRequestStatusManager::ACCEPTED);
     }
 }

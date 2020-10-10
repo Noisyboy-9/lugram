@@ -25,7 +25,6 @@ class UserTest extends TestCase
         $this->assertEquals($post->id, $user->posts[0]->id);
     }
 
-
     /** @test * */
     public function it_may_have_many_follow_requests()
     {
@@ -36,6 +35,7 @@ class UserTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $jane->requests());
         $this->assertCount(1, $jane->requests());
+
     }
 
     /** @test * */
@@ -51,6 +51,18 @@ class UserTest extends TestCase
             'following_id' => $jane->id,
             'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
         ]);
+    }
+
+    /** @test * */
+    public function it_does_not_consider_a_user_followed_before_its_request_being_accepted()
+    {
+        $jhon = $this->login();
+        $jane = $this->createUser();
+
+        $jhon->makeFollowRequest($jane);
+
+        $this->assertCount(0, $jane->followers);
+        $this->assertCount(0, $jhon->followings);
     }
 
     /** @test * */

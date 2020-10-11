@@ -103,4 +103,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
             ->exists();
     }
+
+    public function declineRequest(User $user)
+    {
+        DB::table('follows')
+            ->where('follower_id', $user->id)
+            ->where('following_id', $this->id)
+            ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
+            ->update(['status' => FollowRequestStatusManager::DECLINED]);
+    }
 }

@@ -94,7 +94,7 @@ class FollowRequestTest extends TestCase
     }
 
     /** @test * */
-    public function an_user_must_must_be_authenticated_to_accept_a_request()
+    public function an_user_must_be_authenticated_to_accept_a_request()
     {
         $jhon = $this->createUser();
         $jane = $this->createUser();
@@ -183,8 +183,10 @@ class FollowRequestTest extends TestCase
             'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
         ]);
 
+
         $this->assertFalse($jane->hasAcceptedRequestOf($jhon));
         $this->assertFalse($jhon->isFollowerOf($jane));
         $this->assertFalse($jane->isFollowingOf($jhon));
     }
+
 }

@@ -109,6 +109,32 @@ class UserTest extends TestCase
     }
 
     /** @test * */
+    public function it_may_cancel_a_follow_request()
+    {
+        $jhon = $this->createUser();
+        $jane = $this->login();
+
+        $jhon->makeFollowRequest($jane);
+        $jane->declineRequest($jhon);
+
+        $this->seeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::DECLINED,
+        ]);
+
+        $this->notSeeInDatabase('follows', [
+            'follower_id' => $jhon->id,
+            'following_id' => $jane->id,
+            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
+        ]);
+
+        $this->assertFalse($jane->hasAcceptedRequestOf($jhon));
+        $this->assertFalse($jhon->isFollowerOf($jane));
+        $this->assertFalse($jane->isFollowingOf($jhon));
+    }
+
+    /** @test * */
     public function it_may_have_many_followings()
     {
         $jhon = $this->login();

@@ -6,6 +6,7 @@ use App\Lugram\Managers\FollowRequestStatusManager;
 use App\Lugram\traits\user\HasApiTokens;
 use App\Lugram\traits\user\HasFollowers;
 use App\Lugram\traits\user\HasFollowings;
+use App\Lugram\traits\user\HasFollowRequests;
 use App\Lugram\traits\user\HasManyPosts;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -28,6 +29,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         HasFactory,
         HasApiTokens,
         HasManyPosts,
+        HasFollowRequests,
         HasFollowers,
         HasFollowings;
 
@@ -59,57 +61,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->attributes['password'] = Crypt::encrypt($password);
     }
 
-    public function requests()
-    {
-        return DB::table('follows')
-            ->where('following_id', $this->id)
-            ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
-            ->get();
-    }
-
-    public function makeFollowRequest(User $user)
-    {
-        DB::table('follows')->insert([
-            'follower_id' => $this->id,
-            'following_id' => $user->id,
-            'status' => FollowRequestStatusManager::AWAITING_FOR_RESPONSE,
-            'created_at' => Date::now(),
-            'updated_at' => Date::now(),
-        ]);
-    }
-
-    public function acceptRequest(User $user)
-    {
-        DB::table('follows')
-            ->where('follower_id', $user->id)
-            ->where('following_id', $this->id)
-            ->update(['status' => FollowRequestStatusManager::ACCEPTED]);
-    }
-
-    public function hasAcceptedRequestOf(User $user)
-    {
-        return DB::table('follows')
-            ->where('follower_id', $user->id)
-            ->where('following_id', $this->id)
-            ->where('status', FollowRequestStatusManager::ACCEPTED)
-            ->exists();
-    }
-
-    public function hasAwaitingRequestFrom(User $user)
-    {
-        return DB::table('follows')
-            ->where('follower_id', $user->id)
-            ->where('following_id', $this->id)
-            ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
-            ->exists();
-    }
-
-    public function declineRequest(User $user)
-    {
-        DB::table('follows')
-            ->where('follower_id', $user->id)
-            ->where('following_id', $this->id)
-            ->where('status', FollowRequestStatusManager::AWAITING_FOR_RESPONSE)
-            ->update(['status' => FollowRequestStatusManager::DECLINED]);
-    }
 }

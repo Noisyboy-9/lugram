@@ -250,5 +250,4 @@ class FollowRequestTest extends TestCase
             ->seeJson(['message' => 'not found'])
             ->seeStatusCode(404);
     }
-
 }

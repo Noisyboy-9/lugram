@@ -86,7 +86,7 @@ class FollowRequestTest extends TestCase
 
         $jhon->makeFollowRequest($jane);
 
-        $this->put('/requests/' . $jhon->id . '/accept')
+        $this->patch('/requests/' . $jhon->id . '/accept')
             ->shouldReturnJson()
             ->seeJson(['accepted' => true])
             ->assertResponseOk();
@@ -116,7 +116,7 @@ class FollowRequestTest extends TestCase
 
         $jhon->makeFollowRequest($jane);
 
-        $this->put('/requests/' . $jhon->id . '/accept')
+        $this->patch('/requests/' . $jhon->id . '/accept')
             ->assertResponseStatus(401);
 
 
@@ -139,7 +139,7 @@ class FollowRequestTest extends TestCase
         $jhon = $this->createUser();
         $jane = $this->login();
 
-        $this->put('/requests/' . $jhon->id . '/accept')
+        $this->patch('/requests/' . $jhon->id . '/accept')
             ->shouldReturnJson()
             ->seeJson(['message' => 'no request found from the user'])
             ->seeStatusCode(406);
@@ -155,7 +155,7 @@ class FollowRequestTest extends TestCase
         $jhon->makeFollowRequest($jane);
         $jane->acceptRequest($jhon);
 
-        $this->put('/requests/' . $jhon->id . '/accept')
+        $this->patch('/requests/' . $jhon->id . '/accept')
             ->shouldReturnJson()
             ->seeJson(['message' => 'no request found from the user'])
             ->seeStatusCode(406);
@@ -166,7 +166,7 @@ class FollowRequestTest extends TestCase
     {
         $jane = $this->login();
 
-        $this->put('/requests/' . 123 . '/accept')
+        $this->patch('/requests/' . 123 . '/accept')
             ->shouldReturnJson()
             ->seeJson(['message' => 'not found'])
             ->seeStatusCode(404);
@@ -181,7 +181,7 @@ class FollowRequestTest extends TestCase
 
         $jhon->makeFollowRequest($jane);
 
-        $this->put('/requests/' . $jhon->id . '/decline')
+        $this->patch('/requests/' . $jhon->id . '/decline')
             ->shouldReturnJson()
             ->seeJson(['declined' => true])
             ->assertResponseOk();
@@ -211,7 +211,7 @@ class FollowRequestTest extends TestCase
         $jane = $this->createUser();
 
         $jhon->makeFollowRequest($jane);
-        $this->put('/requests/' . $jhon->id . '/decline')
+        $this->patch('/requests/' . $jhon->id . '/decline')
             ->assertResponseStatus(401);
 
         $this->notSeeInDatabase('follows', [
@@ -235,7 +235,7 @@ class FollowRequestTest extends TestCase
         $jhon = $this->createUser();
         $jane = $this->login();
 
-        $this->put('/requests/' . $jhon->id . '/decline')
+        $this->patch('/requests/' . $jhon->id . '/decline')
             ->seeJson(['message' => 'no request found from the user'])
             ->assertResponseStatus(406);
     }
@@ -249,7 +249,7 @@ class FollowRequestTest extends TestCase
         $jhon->makeFollowRequest($jane);
         $jane->declineRequest($jhon);
 
-        $this->put('/requests/' . $jhon->id . '/decline')
+        $this->patch('/requests/' . $jhon->id . '/decline')
             ->shouldReturnJson()
             ->seeJson(['message' => 'no request found from the user'])
             ->seeStatusCode(406);
@@ -260,7 +260,7 @@ class FollowRequestTest extends TestCase
     {
         $jane = $this->login();
 
-        $this->put('/requests/' . 123 . '/decline')
+        $this->patch('/requests/' . 123 . '/decline')
             ->shouldReturnJson()
             ->seeJson(['message' => 'not found'])
             ->seeStatusCode(404);

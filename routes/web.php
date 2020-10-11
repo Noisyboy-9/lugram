@@ -13,6 +13,6 @@ $router->group(['prefix' => '/auth'], function () use ($router) {
 });
 $router->group(['prefix' => '/requests/{userId}', 'middleware' => 'auth'], function () use ($router) {
     $router->post('', 'Follows\FollowRequestsController@store');
-    $router->put('/accept', 'Follows\AcceptFollowRequestsController@update');
-    $router->put('decline', 'Follows\DeclineFollowRequestsController@update');
+    $router->patch('/accept', 'Follows\AcceptFollowRequestsController@update');
+    $router->patch('decline', 'Follows\DeclineFollowRequestsController@update');
 });

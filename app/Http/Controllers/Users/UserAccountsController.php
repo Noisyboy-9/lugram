@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 
-class RegisterController extends Controller
+class UserAccountsController extends Controller
 {
     /**
      * store a user to the database

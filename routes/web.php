@@ -8,7 +8,7 @@ $router->group(['prefix' => '/posts', 'middleware' => 'auth'], function () use (
     $router->delete('/{id}', 'Posts\PostsController@destroy');
 });
 $router->group(['prefix' => '/auth'], function () use ($router) {
-    $router->post('/register', 'Users\RegisterController@store');
+    $router->post('/register', 'Users\UserAccountsController@store');
     $router->post('/login', 'Users\LoginController@index');
 });
 $router->group(['prefix' => '/requests/{userId}', 'middleware' => 'auth'], function () use ($router) {

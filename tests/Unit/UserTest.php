@@ -197,4 +197,12 @@ class UserTest extends TestCase
 
         $this->assertTrue($jane->isFollowingOf($jhon));
     }
+
+    /** @test * */
+    public function it_knows_its_own_path()
+    {
+        $user = $this->createUser();
+
+        $this->assertEquals('/auth/user/' . $user->id, $user->path());
+    }
 }

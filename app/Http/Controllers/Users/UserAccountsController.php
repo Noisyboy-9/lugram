@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 
@@ -33,6 +34,28 @@ class UserAccountsController extends Controller
                 'email' => $user['email'],
             ],
         ], 201);
+    }
+
+    public function update(Request $request, $userId)
+    {
+        if (auth()->id() != $userId) return response()->json(['message' => 'Unauthorized'], 401);
+
+        $attributes = $this->validateRegisterRequest($request);
+
+        try {
+            $user = User::findOrFail($userId);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json(['message' => 'user not found'], 406);
+        }
+
+
+        $updated = $user->update([
+            'username' => $attributes['username'],
+            'email' => $attributes['email'],
+            'password' => $attributes['password'],
+        ]);
+
+        return response()->json(['updated' => true,], 200);
     }
 
     /**

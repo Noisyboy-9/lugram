@@ -11,18 +11,8 @@ $router->group(['prefix' => '/auth'], function () use ($router) {
     $router->post('/register', 'Users\RegisterController@store');
     $router->post('/login', 'Users\LoginController@index');
 });
-
-
-$router->post('/requests/{userId}', [
-    'middleware' => 'auth',
-    'uses' => 'Follows\FollowRequestsController@store',
-]);
-$router->put('/requests/{userId}/accept', [
-    'middleware' => 'auth',
-    'uses' => 'Follows\AcceptFollowRequestsController@update',
-]);
-
-$router->put('/requests/{userId}/decline', [
-    'middleware' => 'auth',
-    'uses' => 'Follows\DeclineFollowRequestsController@update',
-]);
+$router->group(['prefix' => '/requests/{userId}', 'middleware' => 'auth'], function () use ($router) {
+    $router->post('', 'Follows\FollowRequestsController@store');
+    $router->put('/accept', 'Follows\AcceptFollowRequestsController@update');
+    $router->put('decline', 'Follows\DeclineFollowRequestsController@update');
+});

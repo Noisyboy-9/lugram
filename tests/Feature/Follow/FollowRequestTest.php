@@ -4,6 +4,7 @@ namespace AppTests\Feature\Follow;
 
 use App\Lugram\Managers\FollowRequestStatusManager;
 use App\Lugram\traits\tests\user\HasUserInteractions;
+use App\Models\User;
 use AppTests\TestCase;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 
@@ -31,6 +32,20 @@ class FollowRequestTest extends TestCase
         ]);
 
         $this->assertCount(1, $jane->requests());
+    }
+
+    /** @test * */
+    public function a_user_can_not_send_another_follow_request_to_the_same_user_if_it_has_a_past_request_in_awaiting_status()
+    {
+        $jhon = $this->login(User::factory()->make(['username' => 'jhon']));
+        $jane = $this->createUser(['username' => 'jane']);
+
+        $jhon->makeFollowRequest($jane); // it have a past request in awaiting for response mode
+
+        $this->post('/requests/' . $jane->id)
+            ->shouldReturnJson()
+            ->seeJson(['message' => 'same request have already been sent to user.'])
+            ->assertResponseStatus(406);
     }
 
     /** @test * */

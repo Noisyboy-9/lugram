@@ -17,6 +17,10 @@ class FollowRequestsController extends Controller
             return response()->json(['message' => 'not found'], 404);
         }
 
+
+        if ($user->hasAwaitingRequestFrom(auth()->user())) {
+            return response()->json(['message' => 'same request have already been sent to user.'], 406);
+        }
         auth()->user()->makeFollowRequest($user);
 
         return response()->json(['requested' => true], 201);
